@@ -9,44 +9,39 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <style>
+        [x-cloak] { display: none !important; }
+        html { scroll-behavior: smooth; }
+        
         @keyframes fade-in {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
         .animate-fade-in { animation: fade-in 0.3s ease-out forwards; }
         
-        .animate-spin-slow {
-            animation: spin 8s linear infinite;
-        }
+        .animate-spin-slow { animation: spin 8s linear infinite; }
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
-        
-        [x-cloak] { display: none !important; }
-        
-        html {
-            scroll-behavior: smooth;
-        }
     </style>
 </head>
-<body class="bg-white font-sans text-slate-900" 
+<body class="bg-white font-sans text-slate-900 overflow-x-hidden" 
       x-data="{ isMenuOpen: false, scrolled: false }" 
       @scroll.window="scrolled = (window.pageYOffset > 50)">
 
     <nav :class="scrolled ? 'bg-white shadow-lg py-2' : 'bg-transparent py-4 text-white'"
          class="fixed w-full z-50 transition-all duration-300">
-        <div class="container mx-auto px-6 flex justify-between items-center">
+        <div class="container mx-auto px-4 md:px-6 flex justify-between items-center">
             <div class="flex items-center gap-2">
-                <div :class="scrolled ? 'bg-blue-900 text-white' : 'bg-white text-blue-900'" class="p-2 rounded-lg transition-colors">
-                    <i data-lucide="settings" class="w-6 h-6 animate-spin-slow"></i>
+                <div :class="scrolled ? 'bg-blue-900 text-white' : 'bg-white text-blue-900'" class="p-1.5 md:p-2 rounded-lg transition-colors">
+                    <i data-lucide="settings" class="w-5 h-5 md:w-6 md:h-6 animate-spin-slow"></i>
                 </div>
-                <span :class="scrolled ? 'text-blue-900' : 'text-white'" class="text-2xl font-bold tracking-tighter">
+                <span :class="scrolled ? 'text-blue-900' : 'text-white'" class="text-xl md:text-2xl font-bold tracking-tighter">
                     ATILIM <span class="font-light">DİZEL</span>
                 </span>
             </div>
 
-            <div class="hidden md:flex items-center gap-8">
+            <div class="hidden lg:flex items-center gap-8">
                 <a href="#" class="hover:text-blue-500 transition-colors font-medium">Anasayfa</a>
                 <a href="#hizmetler" class="hover:text-blue-500 transition-colors font-medium">Hizmetler</a>
                 <a href="#kurumsal" class="hover:text-blue-500 transition-colors font-medium">Kurumsal</a>
@@ -57,307 +52,174 @@
                 </a>
             </div>
 
-            <button class="md:hidden" @click="isMenuOpen = !isMenuOpen">
-                <i x-show="!isMenuOpen" data-lucide="menu"></i>
-                <i x-show="isMenuOpen" data-lucide="x"></i>
+            <button class="lg:hidden p-2 outline-none" @click="isMenuOpen = !isMenuOpen">
+                <i x-show="!isMenuOpen" data-lucide="menu" class="w-7 h-7"></i>
+                <i x-show="isMenuOpen" data-lucide="x" class="w-7 h-7 text-slate-900"></i>
             </button>
         </div>
 
         <div x-show="isMenuOpen" 
              x-cloak
-             x-transition
-             class="md:hidden absolute top-full left-0 w-full bg-white text-slate-900 shadow-xl border-t p-6 flex flex-col gap-4 animate-fade-in">
-            <a href="#" @click="isMenuOpen = false" class="text-lg font-semibold border-b pb-2">Anasayfa</a>
-            <a href="#hizmetler" @click="isMenuOpen = false" class="text-lg font-semibold border-b pb-2">Hizmetler</a>
-            <a href="#kurumsal" @click="isMenuOpen = false" class="text-lg font-semibold border-b pb-2">Kurumsal</a>
-            <a href="#iletisim" @click="isMenuOpen = false" class="text-lg font-semibold border-b pb-2">İletişim</a>
-            <div class="flex items-center gap-4 text-blue-600 pt-2">
-                <i data-lucide="phone" class="w-5 h-5"></i>
-                <span class="font-bold">+90 (212) 000 00 00</span>
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 -translate-y-4"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             class="lg:hidden absolute top-0 left-0 w-full bg-white text-slate-900 shadow-2xl border-b p-6 pt-20 flex flex-col gap-4 z-[-1]">
+            <a href="#" @click="isMenuOpen = false" class="text-lg font-semibold py-2 border-b border-slate-50">Anasayfa</a>
+            <a href="#hizmetler" @click="isMenuOpen = false" class="text-lg font-semibold py-2 border-b border-slate-50">Hizmetler</a>
+            <a href="#kurumsal" @click="isMenuOpen = false" class="text-lg font-semibold py-2 border-b border-slate-50">Kurumsal</a>
+            <a href="#iletisim" @click="isMenuOpen = false" class="text-lg font-semibold py-2 border-b border-slate-50">İletişim</a>
+            <div class="flex items-center gap-4 text-blue-600 pt-4">
+                <i data-lucide="phone" class="w-6 h-6"></i>
+                <span class="font-bold text-xl">+90 (212) 000 00 00</span>
             </div>
         </div>
     </nav>
 
-    <section class="relative h-screen flex items-center justify-center overflow-hidden">
+    <section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
         <div class="absolute inset-0 z-0">
-            <div class="absolute inset-0 bg-gradient-to-r from-blue-950/90 to-slate-900/70 z-10"></div>
+            <div class="absolute inset-0 bg-gradient-to-b md:bg-gradient-to-r from-blue-950/95 to-slate-900/70 z-10"></div>
             <img src="https://images.unsplash.com/photo-1530046339160-ce3e530c7d2f?auto=format&fit=crop&q=80&w=2000" 
                  alt="Diesel Engine Workshop" 
                  class="w-full h-full object-cover">
         </div>
 
-        <div class="container mx-auto px-6 relative z-20 text-white">
-            <div class="max-w-3xl">
-                <div class="inline-block px-4 py-1 bg-blue-600 rounded-full text-sm font-bold mb-6 animate-bounce">
+        <div class="container mx-auto px-4 md:px-6 relative z-20 text-white py-12">
+            <div class="max-w-3xl text-center md:text-left">
+                <div class="inline-block px-4 py-1 bg-blue-600 rounded-full text-xs md:text-sm font-bold mb-6">
                     30+ Yıllık Sektör Deneyimi
                 </div>
-                <h1 class="text-5xl md:text-7xl font-extrabold leading-tight mb-6">
+                <h1 class="text-4xl sm:text-5xl md:text-7xl font-extrabold leading-tight mb-6">
                     Geleceğin Dizel Teknolojisi, <span class="text-blue-400">Uzman Ellerde.</span>
                 </h1>
-                <p class="text-xl md:text-2xl text-slate-300 mb-10 leading-relaxed">
-                    Enjektör ve pompa revizyonunda dünya standartlarında çözüm ortağınız. Modern test cihazlarımız ile aracınızın performansını fabrikadan çıktığı ilk güne döndürüyoruz.
+                <p class="text-lg md:text-2xl text-slate-300 mb-10 leading-relaxed max-w-2xl mx-auto md:mx-0">
+                    Enjektör ve pompa revizyonunda dünya standartlarında çözüm ortağınız. Modern test cihazlarımız ile aracınızı fabrikadan çıktığı ilk güne döndürüyoruz.
                 </p>
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <a href="#hizmetler" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-bold text-lg flex items-center justify-center gap-2 transition-all">
-                        Hizmetlerimizi İnceleyin <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                    <a href="#hizmetler" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-all">
+                        Hizmetler <i data-lucide="chevron-right" class="w-5 h-5"></i>
                     </a>
-                    <a href="#iletisim" class="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/30 px-8 py-4 rounded-lg font-bold text-lg text-center transition-all">
+                    <a href="#iletisim" class="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/30 px-8 py-4 rounded-xl font-bold text-lg text-center transition-all">
                         Teklif Alın
                     </a>
                 </div>
             </div>
         </div>
-        
-        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 animate-bounce">
-            <div class="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center p-1">
-                <div class="w-1 h-2 bg-white rounded-full"></div>
-            </div>
-        </div>
     </section>
 
     <div class="bg-slate-50 py-10 border-b overflow-hidden">
-        <div class="container mx-auto px-6 text-center">
-            <p class="text-slate-400 text-sm font-bold uppercase tracking-widest mb-8">Yetkili & Özel Servis Çözümleri</p>
-            <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-60 grayscale hover:grayscale-0 transition-all duration-700">
-                <span class="text-2xl md:text-3xl font-black text-slate-800 tracking-tighter">Bosch</span>
-                <span class="text-2xl md:text-3xl font-black text-slate-800 tracking-tighter">Delphi</span>
-                <span class="text-2xl md:text-3xl font-black text-slate-800 tracking-tighter">Denso</span>
-                <span class="text-2xl md:text-3xl font-black text-slate-800 tracking-tighter">Stanadyne</span>
-                <span class="text-2xl md:text-3xl font-black text-slate-800 tracking-tighter">Siemens VDO</span>
-                <span class="text-2xl md:text-3xl font-black text-slate-800 tracking-tighter">Zexel</span>
+        <div class="container mx-auto px-4">
+            <p class="text-center text-slate-400 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] mb-8">Yetkili & Özel Servis Çözümleri</p>
+            <div class="flex flex-wrap justify-center items-center gap-6 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-700">
+                <span class="text-xl md:text-3xl font-black text-slate-800">Bosch</span>
+                <span class="text-xl md:text-3xl font-black text-slate-800">Delphi</span>
+                <span class="text-xl md:text-3xl font-black text-slate-800">Denso</span>
+                <span class="text-xl md:text-3xl font-black text-slate-800 text-center">Siemens VDO</span>
+                <span class="text-xl md:text-3xl font-black text-slate-800">Zexel</span>
             </div>
         </div>
     </div>
 
-    <section id="hizmetler" class="py-24 bg-white">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-20">
-                <h2 class="text-blue-600 font-bold uppercase tracking-widest mb-4">Neler Yapıyoruz?</h2>
-                <h3 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-6">Profesyonel Revizyon Hizmetleri</h3>
-                <div class="w-20 h-1.5 bg-blue-600 mx-auto"></div>
+    <section id="hizmetler" class="py-16 md:py-24 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-blue-600 font-bold uppercase tracking-widest text-sm mb-4">Neler Yapıyoruz?</h2>
+                <h3 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-6">Profesyonel Revizyon</h3>
+                <div class="w-16 h-1 bg-blue-600 mx-auto"></div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div class="group p-8 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
-                    <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                        <i data-lucide="settings" class="w-8 h-8"></i>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+                <div class="group p-6 md:p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-2xl transition-all duration-300">
+                    <div class="w-14 h-14 bg-blue-600 text-white rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-blue-200">
+                        <i data-lucide="settings" class="w-7 h-7"></i>
                     </div>
-                    <h4 class="text-xl font-bold mb-4">Pompa Revizyonu</h4>
-                    <p class="text-slate-600 leading-relaxed mb-6">Tüm marka ve model dizel yakıt pompalarının bilgisayar destekli test cihazları ile hassas ayarı ve tamiri.</p>
-                    <a href="#" class="inline-flex items-center text-blue-600 font-bold gap-1 group-hover:gap-2 transition-all">
-                        Detaylı Bilgi <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    <h4 class="text-xl font-bold mb-3">Pompa Revizyonu</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-6">Bilgisayar destekli test cihazları ile hassas ayar ve tamir hizmeti.</p>
+                    <a href="#" class="inline-flex items-center text-blue-600 font-bold text-sm gap-1 group-hover:gap-2 transition-all">
+                        Detaylar <i data-lucide="chevron-right" class="w-4 h-4"></i>
                     </a>
                 </div>
-
-                <div class="group p-8 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
-                    <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                        <i data-lucide="cpu" class="w-8 h-8"></i>
+                <div class="group p-6 md:p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-2xl transition-all duration-300">
+                    <div class="w-14 h-14 bg-blue-600 text-white rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-blue-200">
+                        <i data-lucide="cpu" class="w-7 h-7"></i>
                     </div>
-                    <h4 class="text-xl font-bold mb-4">Enjektör Test & Tamir</h4>
-                    <p class="text-slate-600 leading-relaxed mb-6">Common Rail ve mekanik enjektörlerin atomizasyon, geri dönüş ve miktar testleri ile orijinal parça değişimi.</p>
-                    <a href="#" class="inline-flex items-center text-blue-600 font-bold gap-1 group-hover:gap-2 transition-all">
-                        Detaylı Bilgi <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    <h4 class="text-xl font-bold mb-3">Enjektör Test</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-6">Common Rail ve mekanik enjektörlerin orijinal parça ile değişimi.</p>
+                    <a href="#" class="inline-flex items-center text-blue-600 font-bold text-sm gap-1 group-hover:gap-2 transition-all">
+                        Detaylar <i data-lucide="chevron-right" class="w-4 h-4"></i>
                     </a>
-                </div>
-
-                <div class="group p-8 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
-                    <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                        <i data-lucide="wrench" class="w-8 h-8"></i>
-                    </div>
-                    <h4 class="text-xl font-bold mb-4">Arıza Tespit</h4>
-                    <p class="text-slate-600 leading-relaxed mb-6">En güncel diyagnoz cihazları ile aracınızdaki yakıt sistemi hatalarının noktasal tespiti.</p>
-                    <a href="#" class="inline-flex items-center text-blue-600 font-bold gap-1 group-hover:gap-2 transition-all">
-                        Detaylı Bilgi <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                    </a>
-                </div>
-
-                <div class="group p-8 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
-                    <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                        <i data-lucide="truck" class="w-8 h-8"></i>
-                    </div>
-                    <h4 class="text-xl font-bold mb-4">Yedek Parça</h4>
-                    <p class="text-slate-600 leading-relaxed mb-6">Bosch, Delphi, Denso ve Stanadyne markalarına ait orijinal yedek parça satışı ve tedariği.</p>
-                    <a href="#" class="inline-flex items-center text-blue-600 font-bold gap-1 group-hover:gap-2 transition-all">
-                        Detaylı Bilgi <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="kurumsal" class="py-24 bg-slate-900 text-white relative overflow-hidden">
-        <div class="absolute top-0 right-0 w-1/3 h-full bg-blue-600/10 skew-x-12 transform translate-x-1/2"></div>
-        <div class="container mx-auto px-6 relative z-10">
-            <div class="grid md:grid-cols-2 gap-16 items-center">
-                <div>
-                    <h2 class="text-blue-400 font-bold uppercase tracking-widest mb-4">Neden Biz?</h2>
-                    <h3 class="text-4xl md:text-5xl font-extrabold mb-8 leading-tight">Yüksek Kalite Standartları ve %100 Müşteri Memnuniyeti</h3>
-                    <p class="text-slate-400 text-lg mb-10 leading-relaxed">
-                        Atılım Dizel olarak, yakıt sistemi revizyonunda en modern teknolojiyi tecrübemizle birleştiriyoruz. Kullandığımız tüm parçalar garantimiz altındadır.
-                    </p>
-                    
-                    <div class="space-y-6">
-                        <div class="flex items-center gap-4 bg-white/5 p-4 rounded-lg border border-white/10">
-                            <i data-lucide="shield-check" class="text-blue-400"></i>
-                            <span class="text-lg font-medium">Orijinal Yedek Parça Garantisi</span>
-                        </div>
-                        <div class="flex items-center gap-4 bg-white/5 p-4 rounded-lg border border-white/10">
-                            <i data-lucide="users" class="text-blue-400"></i>
-                            <span class="text-lg font-medium">Sertifikalı Uzman Teknisyenler</span>
-                        </div>
-                        <div class="flex items-center gap-4 bg-white/5 p-4 rounded-lg border border-white/10">
-                            <i data-lucide="clock" class="text-blue-400"></i>
-                            <span class="text-lg font-medium">Hızlı Teslimat & Kurumsal Destek</span>
-                        </div>
-                    </div>
                 </div>
                 
-                <div class="relative">
-                    <div class="aspect-square rounded-3xl overflow-hidden border-8 border-white/5 shadow-2xl">
-                        <img src="https://images.unsplash.com/photo-1486006396113-ad73f5fd3127?auto=format&fit=crop&q=80&w=1000" 
-                             alt="Workshop worker" 
-                             class="w-full h-full object-cover">
+                <div class="group p-6 md:p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-2xl transition-all duration-300">
+                    <div class="w-14 h-14 bg-blue-600 text-white rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-blue-200">
+                        <i data-lucide="wrench" class="w-7 h-7"></i>
                     </div>
-                    <div class="absolute -bottom-10 -left-10 bg-blue-600 p-8 rounded-2xl shadow-xl hidden lg:block text-center">
-                        <p class="text-5xl font-black mb-1">25k+</p>
-                        <p class="text-sm font-bold text-blue-100 uppercase">Tamamlanan Revizyon</p>
+                    <h4 class="text-xl font-bold mb-3">Arıza Tespit</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-6">Güncel diyagnoz cihazları ile noktasal hata tespiti.</p>
+                    <a href="#" class="inline-flex items-center text-blue-600 font-bold text-sm gap-1 group-hover:gap-2 transition-all">
+                        Detaylar <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </a>
+                </div>
+
+                <div class="group p-6 md:p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-2xl transition-all duration-300">
+                    <div class="w-14 h-14 bg-blue-600 text-white rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-blue-200">
+                        <i data-lucide="truck" class="w-7 h-7"></i>
                     </div>
+                    <h4 class="text-xl font-bold mb-3">Yedek Parça</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-6">Bosch ve Delphi gibi dünya markalarının orijinal parçaları.</p>
+                    <a href="#" class="inline-flex items-center text-blue-600 font-bold text-sm gap-1 group-hover:gap-2 transition-all">
+                        Detaylar <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </a>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="iletisim" class="py-24 bg-white">
-        <div class="container mx-auto px-6">
-            <div class="bg-slate-50 rounded-[3rem] p-8 md:p-16 shadow-inner overflow-hidden flex flex-col lg:flex-row gap-16">
-                <div class="flex-1">
-                    <h3 class="text-4xl font-extrabold mb-8">İletişime Geçin</h3>
-                    <p class="text-slate-600 text-lg mb-10">Sorularınız veya teklif almak için formu doldurabilir ya da bizi doğrudan arayabilirsiniz.</p>
+    <section id="iletisim" class="py-16 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="bg-slate-900 rounded-3xl md:rounded-[3rem] p-8 md:p-16 flex flex-col lg:flex-row gap-12">
+                <div class="w-full lg:w-1/2 text-white">
+                    <h3 class="text-3xl md:text-4xl font-extrabold mb-6">Bize Ulaşın</h3>
+                    <p class="text-slate-400 mb-10">Sorularınız için formu doldurun veya doğrudan arayın.</p>
                     
-                    <div class="space-y-8">
-                        <div class="flex gap-6">
-                            <div class="w-14 h-14 bg-white shadow-md rounded-2xl flex items-center justify-center text-blue-600 shrink-0">
-                                <i data-lucide="map-pin"></i>
-                            </div>
-                            <div>
-                                <h5 class="font-bold text-xl mb-1">Adres</h5>
-                                <p class="text-slate-600">İkitelli Organize Sanayi Bölgesi, [Mahalle/Sokak No], Başakşehir / İstanbul</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex gap-6">
-                            <div class="w-14 h-14 bg-white shadow-md rounded-2xl flex items-center justify-center text-blue-600 shrink-0">
+                    <div class="space-y-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center text-blue-400">
                                 <i data-lucide="phone"></i>
                             </div>
-                            <div>
-                                <h5 class="font-bold text-xl mb-1">Telefon</h5>
-                                <p class="text-slate-600">+90 (212) 000 00 00</p>
-                            </div>
+                            <span class="text-lg">+90 212 000 00 00</span>
                         </div>
-
-                        <div class="flex gap-6">
-                            <div class="w-14 h-14 bg-white shadow-md rounded-2xl flex items-center justify-center text-blue-600 shrink-0">
-                                <i data-lucide="mail"></i>
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center text-blue-400">
+                                <i data-lucide="map-pin"></i>
                             </div>
-                            <div>
-                                <h5 class="font-bold text-xl mb-1">E-Posta</h5>
-                                <p class="text-slate-600">info@atilimdizel.com</p>
-                            </div>
+                            <span class="text-lg">İkitelli OSB, Başakşehir / İst.</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="flex-1 bg-white p-8 md:p-12 rounded-3xl shadow-xl border border-slate-100">
-                    <form class="space-y-6" @submit.prevent="alert('Mesajınız gönderildi!')">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-bold text-slate-700 mb-2">Ad Soyad</label>
-                                <input type="text" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-bold text-slate-700 mb-2">Telefon</label>
-                                <input type="tel" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2">Konu</label>
-                            <select class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all">
-                                <option>Enjektör Revizyonu</option>
-                                <option>Pompa Tamiri</option>
-                                <option>Yedek Parça Talebi</option>
-                                <option>Diğer</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2">Mesajınız</label>
-                            <textarea rows="4" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all"></textarea>
-                        </div>
-                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-lg transition-all shadow-lg shadow-blue-600/30">
-                            Mesaj Gönder
-                        </button>
+                <div class="w-full lg:w-1/2 bg-white rounded-2xl p-6 md:p-10 shadow-xl">
+                    <form class="space-y-4" @submit.prevent="alert('Mesajınız alındı!')">
+                        <input type="text" placeholder="Ad Soyad" class="w-full px-4 py-3 bg-slate-50 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                        <input type="tel" placeholder="Telefon" class="w-full px-4 py-3 bg-slate-50 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                        <textarea rows="4" placeholder="Mesajınız" class="w-full px-4 py-3 bg-slate-50 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                        <button class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 transition-all">Gönder</button>
                     </form>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer class="bg-slate-900 text-white pt-20 pb-10">
-        <div class="container mx-auto px-6">
-            <div class="grid md:grid-cols-4 gap-12 mb-16">
-                <div class="col-span-1 md:col-span-2">
-                    <div class="flex items-center gap-2 mb-6">
-                        <i data-lucide="settings" class="text-blue-500 w-8 h-8"></i>
-                        <span class="text-2xl font-bold tracking-tighter">
-                            ATILIM <span class="font-light">DİZEL</span>
-                        </span>
-                    </div>
-                    <p class="text-slate-400 text-lg max-w-md mb-8">
-                        İstanbul İkitelli OSB'de, uzman kadromuz ve son teknoloji ekipmanlarımızla dizel yakıt sistemleri revizyonunda lider çözümler üretiyoruz.
-                    </p>
-                    <div class="flex gap-4">
-                        <div class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-blue-600 transition-colors cursor-pointer uppercase text-[10px] font-bold">f</div>
-                        <div class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-blue-600 transition-colors cursor-pointer uppercase text-[10px] font-bold">i</div>
-                        <div class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-blue-600 transition-colors cursor-pointer uppercase text-[10px] font-bold">l</div>
-                    </div>
-                </div>
-                
-                <div>
-                    <h5 class="text-lg font-bold mb-6">Hızlı Menü</h5>
-                    <ul class="space-y-4 text-slate-400">
-                        <li><a href="#" class="hover:text-blue-400 transition-colors">Anasayfa</a></li>
-                        <li><a href="#hizmetler" class="hover:text-blue-400 transition-colors">Hizmetlerimiz</a></li>
-                        <li><a href="#kurumsal" class="hover:text-blue-400 transition-colors">Hakkımızda</a></li>
-                        <li><a href="#iletisim" class="hover:text-blue-400 transition-colors">İletişim</a></li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h5 class="text-lg font-bold mb-6">Çalışma Saatleri</h5>
-                    <ul class="space-y-4 text-slate-400">
-                        <li class="flex justify-between">
-                            <span>Pazartesi - Cuma:</span>
-                            <span class="text-white">08:30 - 18:30</span>
-                        </li>
-                        <li class="flex justify-between">
-                            <span>Cumartesi:</span>
-                            <span class="text-white">08:30 - 15:00</span>
-                        </li>
-                        <li class="flex justify-between text-red-400 font-bold">
-                            <span>Pazar:</span>
-                            <span>Kapalı</span>
-                        </li>
-                    </ul>
-                </div>
+    <footer class="bg-slate-950 text-white py-12">
+        <div class="container mx-auto px-4 text-center">
+            <div class="flex items-center justify-center gap-2 mb-6">
+                <i data-lucide="settings" class="text-blue-500"></i>
+                <span class="font-bold tracking-tighter text-xl">ATILIM DİZEL</span>
             </div>
-            
-            <div class="pt-8 border-t border-white/10 text-center text-slate-500 text-sm">
-                © 2026 Atılım Dizel. Tüm Hakları Saklıdır.
-            </div>
+            <p class="text-slate-500 text-sm">© 2026 Atılım Dizel. Tüm Hakları Saklıdır.</p>
         </div>
     </footer>
 
     <script>
-        // Lucide ikonlarını initialize et
         lucide.createIcons();
     </script>
 </body>
