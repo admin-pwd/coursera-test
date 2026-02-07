@@ -1,773 +1,565 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EWA Design Studio</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <script src="https://unpkg.com/lucide@latest"></script>
+import React, { useState, useEffect } from 'react';
+import { 
+  Settings, 
+  Wrench, 
+  ShieldCheck, 
+  Phone, 
+  Mail, 
+  MapPin, 
+  Menu, 
+  X, 
+  ChevronRight, 
+  Cpu, 
+  Truck,
+  Users,
+  Clock,
+  MessageCircle,
+  Award,
+  BarChart3,
+  CheckCircle2,
+  Package,
+  ArrowRight,
+  Tool
+} from 'lucide-react';
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        serif: ['Playfair Display', 'serif'],
-                    },
-                    colors: {
-                        porcelain: '#FBFBF9',
-                        charcoal: '#1A1A1A',
-                        dopamine: '#FF719A',
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        /* Ekstra yumuşak kaydırma ve font ayarları */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #FBFBF9;
-        }
-        
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-    </style>
-</head>
-<body>
-    <div id="root"></div>
+const App = () => {
+  const [currentPage, setCurrentPage] = useState('home');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-    <script type="text/babel">
-        const { useState, useEffect } = React;
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-        // --- ICON YÖNETİMİ ---
-        // Lucide ikonlarını React bileşenine dönüştüren yardımcı fonksiyon
-        const createIcon = (iconName) => {
-            return ({ color = "currentColor", size = 24, className = "", ...props }) => {
-                const iconNode = lucide.icons[iconName];
-                if (!iconNode) return null;
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPage]);
 
-                return React.createElement(
-                    'svg',
-                    {
-                        xmlns: "http://www.w3.org/2000/svg",
-                        width: size,
-                        height: size,
-                        viewBox: "0 0 24 24",
-                        fill: "none",
-                        stroke: color,
-                        strokeWidth: 2,
-                        strokeLinecap: "round",
-                        strokeLinejoin: "round",
-                        className: className,
-                        ...props
-                    },
-                    ...iconNode.map(([tag, attrs]) => React.createElement(tag, attrs))
-                );
-            };
-        };
+  const navigate = (page) => {
+    setCurrentPage(page);
+    setIsMenuOpen(false);
+  };
 
-        // Kodunuzdaki import edilen ikonları burada tanımlıyoruz
-        const ChevronDown = createIcon('ChevronDown');
-        const Search = createIcon('Search');
-        const ShoppingBag = createIcon('ShoppingBag');
-        const Heart = createIcon('Heart');
-        const ArrowRight = createIcon('ArrowRight');
-        const Play = createIcon('Play');
-        const Info = createIcon('Info');
-        const ChevronLeft = createIcon('ChevronLeft');
-        const ChevronRight = createIcon('ChevronRight');
-        const Star = createIcon('Star');
-        const Camera = createIcon('Camera');
-        const Truck = createIcon('Truck');
-        const ShieldCheck = createIcon('ShieldCheck');
-        const Box = createIcon('Box');
-        const Scissors = createIcon('Scissors');
-        const Menu = createIcon('Menu');
-        const X = createIcon('X');
-        const Home = createIcon('Home');
-        const Minus = createIcon('Minus');
-        const Plus = createIcon('Plus');
-        const Trash2 = createIcon('Trash2');
-        const Globe = createIcon('Globe');
-        const LayoutGrid = createIcon('LayoutGrid');
-        const Gift = createIcon('Gift');
-        const PawPrint = createIcon('PawPrint');
-        const Coffee = createIcon('Coffee');
-        const Cherry = createIcon('Cherry');
-        const User = createIcon('User');
-        const Mail = createIcon('Mail');
+  // Shared Components
+  const SectionHeader = ({ subtitle, title, centered = true }) => (
+    <div className={`${centered ? 'text-center' : 'text-left'} mb-12 md:mb-16`}>
+      <h2 className="text-blue-600 font-bold uppercase tracking-widest mb-4 text-sm md:text-base">{subtitle}</h2>
+      <h3 className="text-3xl md:text-5xl font-extrabold text-slate-900 mb-6 leading-tight">{title}</h3>
+      <div className={`w-20 h-1.5 bg-blue-600 rounded-full ${centered ? 'mx-auto' : ''}`}></div>
+    </div>
+  );
 
+  // --- PAGES ---
 
-        /**
-         * EWA Design Studio - Professional UI Update
-         * Palette: Porcelain Cream (#FBFBF9), Charcoal (#1A1A1A), Dopamine Pink (#FF719A)
-         * Layout: 1000px Content Width, Optimized Hero Spacing, Dynamic Light Header
-         */
+  const HomePage = () => (
+    <>
+      {/* Hero Section */}
+      <section className="relative min-h-[90vh] md:h-screen flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-950/95 via-blue-900/80 to-slate-900/70 z-10" />
+          <img 
+            src="https://images.unsplash.com/photo-1530046339160-ce3e530c7d2f?auto=format&fit=crop&q=80&w=2000" 
+            alt="Dizel Atölyesi" 
+            className="w-full h-full object-cover"
+          />
+        </div>
 
-        const App = () => {
-          // --- DURUM YÖNETİMİ ---
-          const [currentPage, setCurrentPage] = useState('home'); 
-          const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-          const [isCartOpen, setIsCartOpen] = useState(false);
-          const [scrolled, setScrolled] = useState(false);
-          const [activeCollection, setActiveCollection] = useState(null);
-          const [menuHistory, setMenuHistory] = useState([{ id: 'root', title: 'MENU' }]);
-          
-          const [makerMode, setMakerMode] = useState('ready'); 
-          const [activeVariantTab, setActiveVariantTab] = useState('cats');
-          const [selectedVariant, setSelectedVariant] = useState('cat-1');
-          const [filterTheme, setFilterTheme] = useState('All');
+        <div className="container mx-auto px-4 md:px-6 relative z-20 text-white pt-20">
+          <div className="max-w-3xl">
+            <div className="inline-block px-4 py-1 bg-blue-600 rounded-full text-xs md:text-sm font-bold mb-6 animate-pulse">
+              30+ Yıllık Sektör Deneyimi
+            </div>
+            <h1 className="text-4xl md:text-7xl font-extrabold leading-[1.1] mb-6">
+              Geleceğin Dizel Teknolojisi, <br className="hidden md:block" />
+              <span className="text-blue-400">Uzman Ellerde.</span>
+            </h1>
+            <p className="text-lg md:text-2xl text-slate-300 mb-10 leading-relaxed max-w-2xl">
+              Enjektör ve pompa revizyonunda dünya standartlarında çözüm ortağınız. Modern test cihazlarımız ile performans kaybını ortadan kaldırıyoruz.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button onClick={() => navigate('hizmetler')} className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-600/30">
+                Hizmetleri Gör <ChevronRight size={20} />
+              </button>
+              <button onClick={() => navigate('iletisim')} className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/30 px-8 py-4 rounded-xl font-bold text-lg transition-all">
+                Hemen Randevu Al
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
 
-          // Sticky Header ve Renk Değişimi için Kaydırma Dinleyicisi
-          useEffect(() => {
-            const handleScroll = () => setScrolled(window.scrollY > 40);
-            window.addEventListener('scroll', handleScroll);
-            return () => window.removeEventListener('scroll', handleScroll);
-          }, []);
+      {/* Brands Bar */}
+      <div className="bg-slate-50 py-10 border-b overflow-hidden">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-700">
+            {["Bosch", "Delphi", "Denso", "Stanadyne", "Zexel"].map((brand, i) => (
+              <span key={i} className="text-xl md:text-3xl font-black text-slate-800 tracking-tighter">{brand}</span>
+            ))}
+          </div>
+        </div>
+      </div>
 
-          // --- DATA ---
-          const collections = [
-            { id: 'animal', label: "Animal Friends", image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=800", count: 15, theme: 'Kawaii' },
-            { id: 'yummy', label: "Yummy Market", image: "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?q=80&w=800", count: 12, theme: 'Retro' },
-            { id: 'retro', label: "Retro Vibes", image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=800", count: 24, theme: 'Boho' }
-          ];
-
-          const bestSellers = [
-            { id: 1, name: "Sunset Yin-Yang Mug Rug", price: "$45.00", img: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=400", tag: "Hot Choice" },
-            { id: 2, name: "Lazy Cat / Ginger Edition", price: "$45.00", img: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=400", tag: "Bestseller" },
-            { id: 3, name: "Checkered Pink & Cream", price: "$35.00", img: "https://images.unsplash.com/photo-1583209814683-c023dd943c27?q=80&w=400", tag: "Retro" },
-            { id: 4, name: "Fried Egg Punch Coaster", price: "$35.00", img: "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?q=80&w=400", tag: "Dopamine" },
-          ];
-
-          const variants = {
-            cats: [
-              { id: 'cat-1', label: 'Lazy Cat', color: '#fca5a5' },
-              { id: 'cat-2', label: 'Siamese', color: '#d1d5db' },
-              { id: 'cat-3', label: 'Tabby', color: '#fcd34d' },
-              { id: 'cat-4', label: 'Paw', color: '#93c5fd' },
-              { id: 'cat-5', label: 'Sleeping', color: '#c084fc' },
-            ],
-            dogs: [
-              { id: 'dog-1', label: 'Pug', color: '#fdba74' },
-              { id: 'dog-2', label: 'Golden', color: '#fde68a' },
-              { id: 'dog-3', label: 'Frenchie', color: '#94a3b8' },
-            ],
-            others: [
-              { id: 'other-1', label: 'Chick', color: '#fef08a' },
-              { id: 'other-2', label: 'Frog', color: '#86efac' },
-            ]
-          };
-
-          // --- HANDLERS ---
-          const handleMenuNavigate = (item) => {
-            if (item.hasSub) {
-              setMenuHistory([...menuHistory, { id: item.id, title: item.title.toUpperCase() }]);
-            } else {
-              setIsMobileMenuOpen(false);
-              setCurrentPage(item.id === 'business' ? 'b2b' : 'categories');
-            }
-          };
-
-          const handleMenuBack = () => {
-            if (menuHistory.length > 1) {
-              setMenuHistory(menuHistory.slice(0, -1));
-            }
-          };
-
-          // --- BİLEŞENLER ---
-
-          const Header = () => (
-            <div className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-700 ${scrolled || currentPage !== 'home' ? 'bg-white shadow-xl border-b border-slate-100' : 'bg-transparent'}`}>
-              {/* ROW 1: Duyuru Barı */}
-              <div className={`bg-[#1A1A1A] text-white text-[9px] font-bold uppercase tracking-[0.4em] py-2 text-center transition-all duration-500 overflow-hidden ${scrolled ? 'h-0 py-0 opacity-0' : 'h-auto opacity-100'}`}>
-                Free Shipping on all DIY Kits this week
+      {/* Stats Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {[
+              { label: "Yıllık Tecrübe", value: "30+" },
+              { label: "Mutlu Müşteri", value: "15k+" },
+              { label: "Revizyon Kapasitesi", value: "250/ay" },
+              { label: "Uzman Personel", value: "12" },
+            ].map((stat, i) => (
+              <div key={i} className="text-center group">
+                <p className="text-4xl md:text-6xl font-black text-blue-900 mb-2 group-hover:text-blue-600 transition-colors">{stat.value}</p>
+                <p className="text-slate-500 font-bold uppercase text-xs tracking-widest">{stat.label}</p>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-              {/* ROW 2: Logo ve Fonksiyonlar (Header Content) */}
-              <div className={`w-full flex items-center justify-between px-6 md:px-12 transition-all duration-500 ${scrolled ? 'h-16' : 'h-24'} ${scrolled || currentPage !== 'home' ? 'text-[#1A1A1A]' : 'text-white'}`}>
-                <div className="flex-1 lg:hidden">
-                  <button onClick={() => setIsMobileMenuOpen(true)} className="p-2 rounded-full hover:bg-white/10 transition-colors">
-                    <Menu size={24} />
-                  </button>
-                </div>
-
-                <div className="flex-1 hidden lg:flex items-center gap-4">
-                   <Search size={18} className="opacity-80 cursor-pointer" />
-                   <span className="text-[10px] font-bold uppercase tracking-widest opacity-60">Search</span>
-                </div>
-
-                <div className="flex justify-center">
-                  <button onClick={() => setCurrentPage('home')} className={`text-2xl md:text-3xl font-black tracking-tighter uppercase transition-all duration-500 ${scrolled ? 'scale-90' : 'scale-110'}`}>
-                    EWA <span className="font-light opacity-60">Studio</span>
-                  </button>
-                </div>
-
-                <div className="flex-1 flex justify-end items-center gap-4 md:gap-8">
-                  <button className="hidden sm:block opacity-80 hover:opacity-100"><User size={20} /></button>
-                  <div className="relative cursor-pointer opacity-80 hover:opacity-100">
-                    <Heart size={20} className="hidden sm:block" />
-                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-[#FF719A] rounded-full shadow-sm"></span>
-                  </div>
-                  <button onClick={() => setIsCartOpen(true)} className={`flex items-center gap-3 px-5 py-2.5 rounded-full transition-all ${scrolled || currentPage !== 'home' ? 'bg-[#1A1A1A] text-white shadow-lg' : 'bg-white/10 backdrop-blur-md text-white border border-white/20'}`}>
-                    <ShoppingBag size={18} />
-                    <span className="hidden md:inline text-[10px] font-black uppercase tracking-widest italic text-current">Cart (2)</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* ROW 3: Mega Navigasyon */}
-              <div className={`hidden lg:block border-t border-white/10 transition-all duration-500 overflow-visible ${scrolled ? 'h-0 opacity-0' : 'h-12 opacity-100'} ${scrolled || currentPage !== 'home' ? 'text-[#1A1A1A] border-slate-200' : 'text-white'}`}>
-                <nav className="max-w-[1000px] mx-auto h-full flex items-center justify-center gap-12">
-                  <div className="relative group h-full flex items-center">
-                    <button onClick={() => setCurrentPage('categories')} className={`font-bold text-[11px] uppercase tracking-[0.2em] flex items-center gap-1.5 transition-colors ${scrolled || currentPage !== 'home' ? 'hover:text-[#FF719A]' : 'hover:text-[#FF719A]'}`}>
-                      Collections <ChevronDown size={12} className="group-hover:rotate-180 transition-transform" />
-                    </button>
-                    
-                    {/* Mega Menu Overlay */}
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-[900px] bg-white text-[#1A1A1A] p-10 rounded-b-[40px] shadow-[0_30px_60px_rgba(0,0,0,0.15)] border border-slate-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 grid grid-cols-12 gap-8 z-[200]">
-                      <div className="col-span-3 space-y-6 text-left">
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300">By Categories</h4>
-                        <ul className="space-y-4 text-sm font-bold italic">
-                          <li className="hover:text-[#FF719A] cursor-pointer" onClick={() => setCurrentPage('categories')}>Mug Rugs</li>
-                          <li className="hover:text-[#FF719A] cursor-pointer">Car Coasters</li>
-                          <li className="hover:text-[#FF719A] cursor-pointer">Wall Decor</li>
-                          <li className="hover:text-[#FF719A] cursor-pointer">Mirror Charms</li>
-                        </ul>
-                      </div>
-                      <div className="col-span-3 space-y-6 text-left border-l border-slate-50 pl-8">
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300">Series</h4>
-                        <ul className="space-y-4 text-sm font-bold italic">
-                          {collections.map(c => (
-                            <li key={c.id} className="hover:text-[#FF719A] cursor-pointer" onClick={() => {setActiveCollection(c); setCurrentPage('designs');}}>
-                               {c.label}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div className="col-span-6 bg-[#FBFBF9] rounded-[30px] p-6 flex gap-6 group/item relative overflow-hidden shadow-inner">
-                        <div className="flex-1 space-y-3 relative z-10 text-left flex flex-col justify-center">
-                           <span className="text-[8px] font-black bg-[#FF719A] text-white px-2 py-1 rounded-full w-fit uppercase">Featured Drop</span>
-                           <h4 className="text-3xl font-black uppercase tracking-tighter leading-none italic">Yummy Market</h4>
-                           <p className="text-[11px] text-slate-400 font-medium leading-relaxed italic opacity-80">Tasty textiles for your morning coffee ritual.</p>
-                           <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#1A1A1A] hover:text-[#FF719A]">EXPLORE HUB <ArrowRight size={14}/></button>
-                        </div>
-                        <div className="w-40 h-40 rounded-[24px] overflow-hidden shadow-xl relative z-10 border-4 border-white rotate-3">
-                           <img src="https://images.unsplash.com/photo-1619566636858-adf3ef46400b?q=80&w=400" className="w-full h-full object-cover" alt="Featured Item" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <button className="font-bold text-[11px] uppercase tracking-[0.2em] hover:text-[#FF719A] transition-colors">DIY Studio</button>
-                  <button onClick={() => setCurrentPage('b2b')} className="font-bold text-[11px] uppercase tracking-[0.2em] hover:text-[#FF719A] transition-colors">Corporate</button>
-                  <button className="font-bold text-[11px] uppercase tracking-[0.2em] hover:text-[#FF719A] transition-colors">Our Story</button>
-                </nav>
+      {/* About Summary */}
+      <section className="py-20 md:py-32 bg-slate-50 overflow-hidden">
+        <div className="container mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="relative">
+              <div className="absolute -top-10 -left-10 w-40 h-40 bg-blue-100 rounded-full blur-3xl opacity-50"></div>
+              <img src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&q=80&w=800" alt="Atılım Dizel Atölye" className="relative z-10 rounded-[3rem] shadow-2xl" />
+              <div className="absolute bottom-10 -right-6 z-20 bg-blue-600 text-white p-8 rounded-3xl shadow-xl hidden md:block">
+                <p className="text-4xl font-bold mb-1">%100</p>
+                <p className="text-xs font-bold uppercase tracking-widest opacity-80">Orijinal Parça</p>
               </div>
             </div>
-          );
-
-          const MobileCurtainMenu = () => {
-            const currentLevel = menuHistory[menuHistory.length - 1];
-            return (
-              <div className={`fixed inset-0 z-[200] bg-white transition-transform duration-500 transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                <div className="flex items-center justify-between p-6 border-b border-slate-100 text-[#1A1A1A]">
-                  {menuHistory.length > 1 ? (
-                    <button onClick={handleMenuBack} className="flex items-center gap-2 text-[#FF719A] font-black text-xs uppercase tracking-widest">
-                      <ChevronLeft size={20} /> Back
-                    </button>
-                  ) : (
-                    <span className="font-black tracking-tighter text-xl uppercase">EWA STUDIO</span>
-                  )}
-                  <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 hover:bg-slate-50 rounded-full transition-colors text-[#1A1A1A]"><X size={24} /></button>
-                </div>
-
-                <div className="p-8 text-[#1A1A1A]">
-                  <div className="mb-10 text-left">
-                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-300 italic">Explore EWA</span>
-                    <h2 className="text-4xl font-black uppercase tracking-tighter mt-2 italic">{currentLevel.title}</h2>
+            <div>
+              <SectionHeader centered={false} subtitle="Biz Kimiz?" title="30 Yıldır Dizel Teknolojisinin Kalbindeyiz" />
+              <p className="text-lg text-slate-600 leading-relaxed mb-8">
+                Atılım Dizel, İstanbul İkitelli'deki tesislerinde Bosch, Delphi ve Denso gibi dünya devlerinin standartlarında hizmet vermektedir. Dizel yakıt sistemlerindeki her türlü arızayı, en modern test tezgahlarımızda analiz ediyor ve garantili çözümler sunuyoruz.
+              </p>
+              <div className="grid sm:grid-cols-2 gap-4 mb-10">
+                {["Sertifikalı Personel", "Garantili Revizyon", "Hızlı Arıza Tespit", "Orijinal Yedek Parça"].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <CheckCircle2 size={20} className="text-blue-600" />
+                    <span className="font-bold text-slate-700">{item}</span>
                   </div>
-                  <ul className="space-y-4">
-                    {['Collections', 'DIY Studio', 'Maker Club', 'Our Story'].map((item) => (
-                      <li 
-                        key={item} 
-                        onClick={() => {setIsMobileMenuOpen(false); setCurrentPage('categories');}}
-                        className="flex justify-between items-center p-6 rounded-[32px] bg-[#FBFBF9] border border-slate-50 cursor-pointer active:scale-[0.98] transition-all shadow-sm"
-                      >
-                        <span className="text-xl font-black uppercase tracking-tight italic">{item}</span>
-                        <ChevronRight size={24} className="text-slate-200" />
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                ))}
               </div>
-            );
-          };
+              <button onClick={() => navigate('kurumsal')} className="flex items-center gap-2 text-blue-600 font-bold hover:gap-4 transition-all">
+                Hakkımızda Daha Fazla Bilgi <ArrowRight size={20} />
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
 
-          const CartDrawer = () => (
-            <>
-              <div className={`fixed inset-0 bg-[#1A1A1A]/50 backdrop-blur-sm z-[150] transition-opacity duration-500 ${isCartOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`} onClick={() => setIsCartOpen(false)} />
-              <div className={`fixed top-0 right-0 h-full w-full max-w-md bg-white z-[160] shadow-2xl transition-transform duration-700 transform ${isCartOpen ? 'translate-x-0' : 'translate-x-full'} flex flex-col rounded-l-[40px]`}>
-                <div className="p-8 border-b flex justify-between items-center text-[#1A1A1A]">
-                  <h2 className="text-xl font-black uppercase tracking-tight italic">Studio Bag (2)</h2>
-                  <button onClick={() => setIsCartOpen(false)} className="hover:rotate-90 transition-transform p-2 bg-slate-50 rounded-full"><X size={24} /></button>
+      {/* Featured Services */}
+      <section className="py-20 md:py-32 bg-white">
+        <div className="container mx-auto px-6">
+          <SectionHeader subtitle="Hizmetlerimiz" title="Profesyonel Çözüm Odaklı Servis" />
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                title: "Enjektör Revizyonu",
+                desc: "Common Rail enjektörlerin atomizasyon ve geri dönüş testleri sonrasında orijinal parçalarla yenilenmesi.",
+                icon: <Cpu className="w-8 h-8" />
+              },
+              {
+                title: "Pompa Tamiri",
+                desc: "Mekanik ve elektronik yakıt pompalarının debi ayarları ve sızdırmazlık testleri hassasiyetle yapılır.",
+                icon: <Settings className="w-8 h-8" />
+              },
+              {
+                title: "Diyagnoz & Tespit",
+                desc: "En güncel arıza tespit cihazları ile yakıt sistemi hatalarını saniyeler içinde belirliyoruz.",
+                icon: <BarChart3 className="w-8 h-8" />
+              }
+            ].map((s, i) => (
+              <div key={i} className="p-10 rounded-[2.5rem] bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-2xl transition-all group">
+                <div className="w-16 h-16 bg-blue-600 text-white rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+                  {s.icon}
                 </div>
-                
-                <div className="p-8 bg-[#FBFBF9] border-b text-[#1A1A1A]">
-                   <div className="flex justify-between text-[10px] font-black uppercase tracking-widest mb-4">
-                      <span className="opacity-50 text-left">Free Shipping Progress</span>
-                      <span className="text-[#FF719A]">ADD $15.00 MORE</span>
-                   </div>
-                   <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden shadow-inner">
-                      <div className="h-full bg-[#FF719A] w-[80%] transition-all duration-1000"></div>
-                   </div>
-                </div>
-
-                <div className="flex-1 overflow-y-auto p-8 space-y-8">
-                  <div className="flex gap-6 group text-[#1A1A1A]">
-                    <div className="w-24 h-24 bg-slate-50 rounded-[24px] overflow-hidden shrink-0 border border-slate-100 p-1 shadow-sm">
-                       <img src="https://images.unsplash.com/photo-1544923246-77307dd654cb?q=80&w=200" className="w-full h-full object-cover rounded-[20px] group-hover:scale-110 transition-transform duration-500" alt="Item" />
-                    </div>
-                    <div className="flex-1 text-left flex flex-col justify-center">
-                      <div className="flex justify-between font-black text-base italic leading-tight text-left">
-                         <h4 className="uppercase tracking-tight">Lazy Cat Mug Rug</h4>
-                         <span>$35.00</span>
-                      </div>
-                      <p className="text-[10px] text-slate-400 mt-1 uppercase tracking-widest font-black text-left">Studio Choice / Grey</p>
-                      <div className="flex items-center gap-4 mt-4">
-                         <button className="p-1 hover:text-[#FF719A] border rounded-lg transition-colors"><Minus size={14} /></button>
-                         <span className="text-xs font-black">1</span>
-                         <button className="p-1 hover:text-[#FF719A] border rounded-lg transition-colors"><Plus size={14} /></button>
-                         <Trash2 size={16} className="text-slate-300 ml-auto cursor-pointer hover:text-red-500 transition-colors" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-10 bg-[#FBFBF9] border-t border-slate-100 space-y-6 text-left text-[#1A1A1A]">
-                  <div className="flex justify-between font-black italic">
-                    <span className="uppercase tracking-widest text-xs opacity-40">TOTAL</span>
-                    <span className="text-3xl font-black tracking-tighter">$70.00</span>
-                  </div>
-                  <button className="w-full bg-[#1A1A1A] text-white py-7 rounded-[28px] font-black uppercase text-[11px] tracking-[0.4em] shadow-xl hover:bg-[#FF719A] active:scale-[0.98] transition-all">
-                    SECURE CHECKOUT
-                  </button>
-                </div>
+                <h4 className="text-2xl font-bold mb-4">{s.title}</h4>
+                <p className="text-slate-500 leading-relaxed mb-8">{s.desc}</p>
+                <button onClick={() => navigate('hizmetler')} className="text-blue-600 font-bold flex items-center gap-2">
+                  Detaylar <ChevronRight size={18} />
+                </button>
               </div>
-            </>
-          );
+            ))}
+          </div>
+          <div className="text-center mt-16">
+            <button onClick={() => navigate('hizmetler')} className="bg-slate-900 text-white px-10 py-4 rounded-xl font-bold hover:bg-blue-600 transition-colors">
+              Tüm Hizmetlerimizi Görün
+            </button>
+          </div>
+        </div>
+      </section>
 
-          const FooterView = () => (
-            <footer className="bg-[#1A1A1A] text-white pt-32 pb-20 relative overflow-hidden">
-              <div className="max-w-[1000px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 px-8 relative z-10 text-left">
-                <div className="space-y-8 text-left">
-                  <h3 className="text-3xl font-black tracking-tighter uppercase italic leading-none">EWA STUDIO</h3>
-                  <p className="text-sm text-white/40 leading-relaxed font-medium italic">Digital Optimism & Mindful Craft. Spreading joy from Istanbul to the world through handmade textures.</p>
+      {/* CTA Final */}
+      <section className="py-20">
+        <div className="container mx-auto px-6">
+          <div className="bg-blue-600 rounded-[3rem] p-10 md:p-20 text-white relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
+            <div className="relative z-10 max-w-2xl">
+              <h3 className="text-3xl md:text-5xl font-black mb-6">Aracınızın Performansını Fabrika Ayarlarına Döndürelim</h3>
+              <p className="text-blue-100 text-lg mb-10">Hemen servis randevusu alarak yakıt tasarrufu sağlayın ve motor ömrünü uzatın.</p>
+              <div className="flex flex-wrap gap-4">
+                <a href="tel:+902120000000" className="bg-white text-blue-600 px-8 py-4 rounded-xl font-bold flex items-center gap-2 hover:bg-slate-100 transition-colors">
+                  <Phone size={20} /> Şimdi Arayın
+                </a>
+                <button onClick={() => navigate('iletisim')} className="bg-blue-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-950 transition-colors">
+                  Teklif Alın
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+
+  const CorporatePage = () => (
+    <div className="pt-24">
+      <section className="py-20 bg-slate-50">
+        <div className="container mx-auto px-6">
+          <SectionHeader subtitle="Kurumsal" title="Atılım Dizel Hakkında" />
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <div className="relative">
+              <img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=800" alt="Kurumsal Görsel" className="rounded-3xl shadow-2xl" />
+              <div className="absolute -bottom-6 -right-6 bg-blue-600 text-white p-6 rounded-2xl hidden md:block">
+                <Award size={48} className="mb-4" />
+                <p className="font-bold">Sertifikalı <br/>Hizmet Kalitesi</p>
+              </div>
+            </div>
+            <div>
+              <h4 className="text-2xl font-bold mb-6 text-blue-900">Vizyonumuz & Misyonumuz</h4>
+              <p className="text-slate-600 leading-relaxed mb-6">
+                Atılım Dizel, dizel yakıt sistemleri alanında 30 yılı aşkın tecrübesiyle sektörün öncü kuruluşlarından biri haline gelmiştir. Misyonumuz, en yeni test teknolojilerini kullanarak araç sahiplerine ve kurumsal filolara en yüksek verimlilikte revizyon çözümleri sunmaktır.
+              </p>
+              <div className="space-y-4">
+                {[
+                  "Müşteri odaklı teknik destek",
+                  "Sürekli güncellenen teknolojik altyapı",
+                  "Orijinal yedek parça sadakati",
+                  "Çevre dostu ve ekonomik çözümler"
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <CheckCircle2 className="text-blue-600" size={20} />
+                    <span className="font-medium text-slate-700">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+
+  const ServicesPage = () => (
+    <div className="pt-24">
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-6">
+          <SectionHeader subtitle="Uzmanlık Alanlarımız" title="Neler Yapıyoruz?" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                title: "Common Rail Enjektör Tamiri",
+                desc: "Bosch, Delphi, Denso marka enjektörlerin atomizasyon ve geri dönüş testleri sonrasında orijinal parçalarla revizyonu.",
+                icon: <Cpu className="w-10 h-10" />
+              },
+              {
+                title: "Mazot Pompası Ayarı",
+                desc: "Mekanik ve elektronik mazot pompalarının debi ayarları ve sızdırmazlık testleri bilgisayarlı tezgahlarda yapılır.",
+                icon: <Settings className="w-10 h-10" />
+              },
+              {
+                title: "Diyagnoz & Arıza Tespit",
+                desc: "Aracınızın yakıt sistemindeki sorunları, en güncel yazılımlara sahip arıza tespit cihazları ile nokta atışı belirliyoruz.",
+                icon: <BarChart3 className="w-10 h-10" />
+              },
+              {
+                title: "Turbo Revizyonu",
+                desc: "Dizel araçların turboşarj sistemlerinin kontrolü, balans ayarı ve gerekli durumlarda parça değişimi.",
+                icon: <Wrench className="w-10 h-10" />
+              },
+              {
+                title: "Partikül Filtre Temizliği",
+                desc: "Tıkanmış DPF sistemlerinin özel kimyasallar ve makinelerle temizlenerek egzoz emisyonunun düşürülmesi.",
+                icon: <Truck className="w-10 h-10" />
+              },
+              {
+                title: "Mobil Servis Desteği",
+                desc: "Kurumsal filolar için yerinde arıza tespiti ve acil müdahale çözümleri sunuyoruz.",
+                icon: <Clock className="w-10 h-10" />
+              }
+            ].map((service, i) => (
+              <div key={i} className="p-10 rounded-3xl border border-slate-100 bg-slate-50 hover:bg-white hover:shadow-xl transition-all group">
+                <div className="mb-6 text-blue-600 group-hover:scale-110 transition-transform">{service.icon}</div>
+                <h4 className="text-xl font-bold mb-4">{service.title}</h4>
+                <p className="text-slate-500 leading-relaxed">{service.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+
+  const ProductsPage = () => (
+    <div className="pt-24">
+      <section className="py-20 bg-slate-50">
+        <div className="container mx-auto px-6">
+          <SectionHeader subtitle="Stok & Tedarik" title="Orijinal Yedek Parçalar" />
+          <div className="grid md:grid-cols-4 gap-6">
+            {[
+              { name: "Enjektör Memeleri", brand: "Bosch / Delphi", type: "Tüm Modeller" },
+              { name: "Pompa Elemanları", brand: "Denso / Stanadyne", type: "Ağır Vasıta" },
+              { name: "Common Rail Ventilleri", brand: "Bosch", type: "Binek / Hafif Ticari" },
+              { name: "Yakıt Filtreleri", brand: "Orijinal Ekipman", type: "Bakım Setleri" }
+            ].map((product, i) => (
+              <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mb-4">
+                  <Package size={24} />
+                </div>
+                <h5 className="font-bold text-lg mb-1">{product.name}</h5>
+                <p className="text-blue-600 text-sm font-bold mb-4">{product.brand}</p>
+                <p className="text-slate-500 text-xs uppercase tracking-widest">{product.type}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-16 bg-blue-900 rounded-3xl p-10 text-white flex flex-col md:flex-row items-center justify-between gap-8">
+            <div>
+              <h4 className="text-2xl font-bold mb-2 text-blue-400">Aradığınız Parçayı Bulamadınız mı?</h4>
+              <p className="text-blue-100">Geniş tedarik ağımız ile ihtiyacınız olan dizel parçayı 24 saat içinde temin ediyoruz.</p>
+            </div>
+            <button onClick={() => navigate('iletisim')} className="bg-white text-blue-900 px-8 py-4 rounded-xl font-bold hover:bg-blue-50 transition-colors shrink-0 flex items-center gap-2 text-sm md:text-base">
+              Hemen Sorgula <ArrowRight size={20} />
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+
+  const ContactPage = () => (
+    <div className="pt-24">
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-6">
+          <SectionHeader subtitle="Bize Ulaşın" title="İletişim & Konum" />
+          <div className="grid lg:grid-cols-2 gap-12">
+            <div className="space-y-8">
+              <div className="bg-slate-50 p-10 rounded-[2.5rem]">
+                <h4 className="text-2xl font-bold mb-8">İletişim Bilgileri</h4>
+                <div className="space-y-6 text-sm md:text-base">
                   <div className="flex gap-4">
-                      <div className="w-10 h-10 bg-white/5 rounded-[15px] flex items-center justify-center hover:bg-[#FF719A] transition-all cursor-pointer group shadow-2xl"><Camera size={18} className="group-hover:scale-110 transition-transform" /></div>
-                      <div className="w-10 h-10 bg-white/5 rounded-[15px] flex items-center justify-center hover:bg-[#FF719A] transition-all cursor-pointer group shadow-2xl"><Globe size={18} className="group-hover:scale-110 transition-transform" /></div>
+                    <MapPin className="text-blue-600 shrink-0" />
+                    <p className="text-slate-600 font-medium">İkitelli Organize Sanayi Bölgesi, [Adres], Başakşehir / İstanbul</p>
                   </div>
-                </div>
-                <div className="text-left">
-                  <h4 className="text-[10px] font-black uppercase tracking-[0.5em] text-white/20 mb-10 italic">EXPLORE</h4>
-                  <ul className="space-y-4 text-sm font-bold italic opacity-60">
-                    <li className="hover:text-[#FF719A] cursor-pointer" onClick={() => setCurrentPage('designs')}>Animal Friends</li>
-                    <li className="hover:text-[#FF719A] cursor-pointer">Yummy Market</li>
-                    <li className="hover:text-[#FF719A] cursor-pointer">Retro Vibes</li>
-                    <li className="hover:text-[#FF719A] cursor-pointer opacity-30">Shop All</li>
-                  </ul>
-                </div>
-                <div className="text-left">
-                  <h4 className="text-[10px] font-black uppercase tracking-[0.5em] text-white/20 mb-10 italic">SUPPORT</h4>
-                  <ul className="space-y-4 text-sm font-bold italic opacity-60">
-                    <li className="hover:text-[#FF719A] cursor-pointer">FAQ</li>
-                    <li className="hover:text-[#FF719A] cursor-pointer">Shipping</li>
-                    <li className="hover:text-[#FF719A] cursor-pointer">Returns</li>
-                    <li className="hover:text-[#FF719A] cursor-pointer">Contact</li>
-                  </ul>
-                </div>
-                <div className="bg-white/5 p-8 rounded-[40px] border border-white/5 shadow-2xl text-left">
-                  <h4 className="text-[11px] font-black uppercase tracking-[0.5em] text-[#FF719A] mb-6 italic">MAKER CLUB</h4>
-                  <p className="text-xs opacity-50 mb-8 leading-relaxed">Join 50k+ creators for free digital patterns and early access.</p>
-                  <div className="flex flex-col gap-4">
-                    <input type="text" placeholder="Creative Email" className="bg-white/5 border-none rounded-[15px] px-8 py-6 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#FF719A] w-full text-white placeholder:text-white/20 shadow-inner" />
-                    <button className="bg-white text-[#1A1A1A] py-5 rounded-[15px] hover:bg-[#FF719A] active:scale-95 transition-all font-black uppercase tracking-widest text-[9px] shadow-xl">SUBSCRIBE</button>
+                  <div className="flex gap-4">
+                    <Phone className="text-blue-600 shrink-0" />
+                    <p className="text-slate-600 font-medium">+90 (212) 000 00 00</p>
+                  </div>
+                  <div className="flex gap-4">
+                    <Mail className="text-blue-600 shrink-0" />
+                    <p className="text-slate-600 font-medium">info@atilimdizel.com</p>
                   </div>
                 </div>
               </div>
-              <div className="max-w-[1000px] mx-auto pt-20 flex flex-col md:flex-row justify-between items-center gap-10 opacity-20 text-[9px] font-black uppercase tracking-[0.6em] relative z-10 text-[#FBFBF9] px-8">
-                <span>© 2025 EWA STUDIO — ISTANBUL</span>
-                <div className="flex gap-10 grayscale scale-95 transition-all hover:grayscale-0">
-                   <span>VISA</span> <span>MASTER</span> <span>PAYPAL</span>
-                </div>
+              <div className="h-[450px] rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-slate-50">
+                <iframe 
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3429.3865331055927!2d27.839994483836257!3d41.14710797275578!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14b4e128eb034d1f%3A0xa0382a7255bad743!2zQXTEsWzEsW0gRGl6ZWwgUG9tcGEgRW5qZWt0w7ZyIEJha8SxbSBPbmFyxLFtIFNlcnZpc2kgw4dvcmx1!5e1!3m2!1sen!2sus!4v1769074344401!5m2!1sen!2sus" 
+                  width="100%" height="100%" style={{ border: 0 }} allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Harita"
+                ></iframe>
               </div>
-            </footer>
-          );
-
-          const BottomBar = () => (
-            <nav className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] h-16 bg-white/95 backdrop-blur-xl border border-slate-200 shadow-2xl rounded-[35px] flex items-center justify-around px-4 z-[150] ring-4 ring-black/5">
-              <button onClick={() => setCurrentPage('home')} className={`flex flex-col items-center gap-1 ${currentPage === 'home' ? 'text-[#FF719A]' : 'text-slate-400'}`}>
-                <Home size={20} /><span className="text-[8px] font-black uppercase tracking-widest">Home</span>
-              </button>
-              <button className="flex flex-col items-center gap-1 text-slate-400"><Search size={20} /><span className="text-[8px] font-black uppercase tracking-widest">Search</span></button>
-              <button className="flex flex-col items-center gap-1 text-slate-400 relative">
-                <Heart size={20} /><span className="text-[8px] font-black uppercase tracking-widest">Wish</span>
-                <span className="absolute top-0 right-0 w-2 h-2 bg-[#FF719A] rounded-full border border-white"></span>
-              </button>
-              <button onClick={() => setIsCartOpen(true)} className={`flex flex-col items-center gap-1 ${isCartOpen ? 'text-[#FF719A]' : 'text-slate-400'}`}>
-                <ShoppingBag size={20} /><span className="text-[8px] font-black uppercase tracking-widest">Cart</span>
-              </button>
-            </nav>
-          );
-
-          // --- CONTENT VIEWS ---
-
-          const HomeView = () => (
-            <main className="relative w-full min-h-screen bg-[#FBFBF9] pb-32">
-              {/* Full-width Hero Section - Increased pt for header visibility and fixed spacing */}
-              <section className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-[#1A1A1A] pt-[120px] lg:pt-[150px]">
-                <div className="absolute inset-0 z-0">
-                  <div className="absolute inset-0 bg-black/40 z-10 transition-opacity duration-700"></div>
-                  {/* Dopamine Decor Concept Image */}
-                  <img src="https://aestheticsofjoy.com/wp-content/uploads/2024/03/AoJ_dopaminedecor01.jpg" className="w-full h-full object-cover animate-slow-zoom" alt="Dopamine Decor Atmosphere" />
-                </div>
-                
-                <div className="relative z-20 text-center space-y-6 max-w-6xl px-8">
-                  <div className="space-y-4">
-                    <span className="inline-block px-6 py-2 bg-[#FF719A] text-white text-[10px] font-black uppercase tracking-[0.4em] rounded-full shadow-2xl">
-                       DOPAMINE DECOR — EST. 2018
-                    </span>
-                    <h2 className="text-7xl md:text-9xl lg:text-[140px] font-black text-white leading-[0.75] tracking-tighter uppercase italic drop-shadow-2xl">
-                      Elevate Your <br />
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF719A] to-white italic font-serif lowercase tracking-normal">ritual</span> space.
-                    </h2>
+            </div>
+            <div className="bg-slate-900 p-8 md:p-16 rounded-[2.5rem] text-white">
+              <h4 className="text-3xl font-bold mb-8">Hızlı Teklif Formu</h4>
+              <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-slate-400">Ad Soyad</label>
+                    <input type="text" className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl outline-none focus:border-blue-500 transition-all" />
                   </div>
-                  
-                  <p className="text-xl md:text-3xl text-white/95 max-w-3xl mx-auto font-medium leading-relaxed italic opacity-95 text-center">
-                      Transforming ordinary desks into curated ritual spaces <br className="hidden md:block" /> through the warmth of handcrafted textures and colors.
-                  </p>
-
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6">
-                    <button 
-                      onClick={() => setCurrentPage('categories')}
-                      className="group bg-white text-[#1A1A1A] px-12 py-5 rounded-full font-black text-xs uppercase tracking-[0.3em] hover:bg-[#FF719A] hover:text-white transition-all shadow-2xl flex items-center gap-4 active:scale-95"
-                    >
-                      SHOP THE STUDIO <ArrowRight size={22} className="group-hover:translate-x-2 transition-transform" />
-                    </button>
-                    <button className="flex items-center gap-4 text-white/70 hover:text-white transition-all group scale-110">
-                      <div className="w-14 h-14 border-2 border-white/30 rounded-full flex items-center justify-center backdrop-blur-xl group-hover:bg-white/10 transition-all shadow-xl">
-                        <Play size={20} fill="currentColor" />
-                      </div>
-                      <div className="text-left text-white">
-                        <span className="block text-[10px] font-black uppercase tracking-widest opacity-80 leading-none mb-1">Studio Tape</span>
-                        <span className="block text-[9px] uppercase font-black italic opacity-60">Workshop / 0:15</span>
-                      </div>
-                    </button>
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-slate-400">Telefon</label>
+                    <input type="tel" className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl outline-none focus:border-blue-500 transition-all" />
                   </div>
                 </div>
-              </section>
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-slate-400">Konu</label>
+                  <select className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl outline-none focus:border-blue-500 transition-all text-slate-400 appearance-none">
+                    <option>Enjektör Revizyonu</option>
+                    <option>Pompa Tamiri</option>
+                    <option>Yedek Parça Sorgulama</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-slate-400">Mesajınız</label>
+                  <textarea rows="4" className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl outline-none focus:border-blue-500 transition-all"></textarea>
+                </div>
+                <button className="w-full bg-blue-600 hover:bg-blue-700 py-5 rounded-xl font-bold text-lg shadow-xl shadow-blue-600/20 transition-all">
+                  Formu Gönder
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
 
-              {/* Centered Content Section (1000px Max-Width) */}
-              <div className="max-w-[1000px] mx-auto px-6 text-left">
-                  {/* Trust Indicators */}
-                  <section className="py-24 grid grid-cols-1 md:grid-cols-3 gap-12 text-[#1A1A1A]/30 text-[9px] font-black uppercase tracking-[0.5em] border-b border-slate-100">
-                    <div className="flex items-center justify-center gap-4 text-center"><Truck size={14} className="text-[#FF719A]"/> Free Shipping Over $75</div>
-                    <div className="flex items-center justify-center gap-4 text-center"><ShieldCheck size={14} className="text-[#FF719A]"/> 100% Artisan Hand-made</div>
-                    <div className="flex items-center justify-center gap-4 text-center"><Star size={14} className="text-[#FF719A]"/> Original EWA Designs</div>
-                  </section>
+  return (
+    <div className="min-h-screen bg-white font-sans text-slate-900 overflow-x-hidden">
+      {/* WhatsApp Floating Button */}
+      <a 
+        href="https://wa.me/905000000000" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-[60] bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center justify-center group"
+      >
+        <MessageCircle size={32} fill="currentColor" />
+        <span className="max-w-0 overflow-hidden group-hover:max-w-xs group-hover:ml-2 transition-all duration-500 ease-in-out whitespace-nowrap font-bold">
+          WhatsApp Destek
+        </span>
+      </a>
 
-                  {/* Bestsellers Gallery */}
-                  <section className="py-32">
-                    <div className="flex justify-between items-end mb-20">
-                      <div className="text-left">
-                        <span className="text-[10px] font-black text-[#FF719A] uppercase tracking-[0.5em]">TENDING HUB</span>
-                        <h3 className="text-6xl font-black uppercase tracking-tighter italic text-[#1A1A1A] mt-6 leading-none">Studio Best <br/> Sellers</h3>
-                      </div>
-                      <button className="text-[10px] font-black uppercase tracking-widest border-b-2 border-[#1A1A1A] pb-2 hover:text-[#FF719A] transition-all" onClick={() => setCurrentPage('categories')}>EXPLORE ALL</button>
-                    </div>
-                    <div className="grid grid-cols-2 gap-x-12 gap-y-20">
-                      {bestSellers.map(item => (
-                        <div key={item.id} className="group cursor-pointer space-y-8" onClick={() => setCurrentPage('pdp')}>
-                           <div className="aspect-square bg-white rounded-[70px] overflow-hidden border-8 border-white shadow-2xl group-hover:shadow-[0_40px_80px_rgba(0,0,0,0.1)] transition-all duration-1000 relative">
-                              <img src={item.img} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1500ms]" alt={item.name} />
-                              <div className="absolute top-8 left-8 px-5 py-2 bg-[#FF719A] text-white text-[8px] font-black uppercase tracking-widest rounded-full shadow-lg">{item.tag}</div>
-                           </div>
-                           <div className="px-6 text-left">
-                              <h4 className="font-black uppercase text-xl leading-tight italic text-[#1A1A1A]">{item.name}</h4>
-                              <p className="text-base font-black text-slate-300 mt-2">{item.price}</p>
-                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  </section>
+      {/* Navigation */}
+      <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled || currentPage !== 'home' ? 'bg-white shadow-lg py-2' : 'bg-transparent py-4 text-white'}`}>
+        <div className="container mx-auto px-4 md:px-6 flex justify-between items-center">
+          <button onClick={() => navigate('home')} className="flex items-center gap-2 cursor-pointer outline-none">
+            <div className={`p-1.5 md:p-2 rounded-lg ${scrolled || currentPage !== 'home' ? 'bg-blue-900 text-white' : 'bg-white text-blue-900'}`}>
+              <Settings className="w-5 h-5 md:w-6 md:h-6 animate-spin-slow" />
+            </div>
+            <span className={`text-xl md:text-2xl font-bold tracking-tighter ${scrolled || currentPage !== 'home' ? 'text-blue-900' : 'text-white'}`}>
+              ATILIM <span className="font-light">DİZEL</span>
+            </span>
+          </button>
 
-                  {/* Featured Sections (Hybrid Model) */}
-                  <section className="py-32 grid grid-cols-1 md:grid-cols-2 gap-12 text-left">
-                      <div className="aspect-square bg-[#FF719A]/5 rounded-[80px] p-16 flex flex-col justify-between items-start group cursor-pointer border-4 border-white shadow-2xl relative overflow-hidden" onClick={() => setCurrentPage('categories')}>
-                         <div className="absolute top-0 right-0 w-80 h-80 bg-[#FF719A]/10 blur-3xl rounded-full"></div>
-                         <span className="text-[10px] font-black uppercase tracking-[0.5em] text-[#FF719A] relative z-10">THE MAKER JOURNEY</span>
-                         <div className="relative z-10 text-left">
-                            <h3 className="text-7xl font-black uppercase tracking-tighter italic text-[#1A1A1A] leading-[0.8]">DIY Craft <br/> Kits</h3>
-                            <p className="text-base text-slate-500 font-medium italic mt-8 opacity-80 leading-relaxed italic">Everything you need to stitch your joy at home. High-quality yarns & needles included.</p>
-                         </div>
-                         <button className="relative z-10 w-20 h-20 bg-[#1A1A1A] text-white rounded-full flex items-center justify-center group-hover:bg-[#FF719A] transition-all group-hover:rotate-45 shadow-2xl"><ArrowRight size={32}/></button>
-                      </div>
-                      <div className="aspect-square bg-[#1A1A1A] rounded-[80px] p-16 flex flex-col justify-between items-start group cursor-pointer border-4 border-[#1A1A1A] shadow-2xl relative overflow-hidden" onClick={() => setCurrentPage('categories')}>
-                         <div className="absolute bottom-0 right-0 w-80 h-80 bg-white/5 blur-3xl rounded-full"></div>
-                         <span className="text-[10px] font-black uppercase tracking-[0.5em] text-white/30 relative z-10">CURATED SELECTION</span>
-                         <div className="relative z-10 text-left text-white">
-                            <h3 className="text-7xl font-black uppercase tracking-tighter italic text-white leading-[0.8]">Studio <br/> Finished</h3>
-                            <p className="text-base text-white/40 font-medium italic mt-8 opacity-80 leading-relaxed italic">Skip the stitching. Discover our premium handmade decor ready to ship globally.</p>
-                         </div>
-                         <button className="relative z-10 w-20 h-20 bg-white text-[#1A1A1A] rounded-full flex items-center justify-center group-hover:bg-[#FF719A] transition-all group-hover:rotate-45 shadow-2xl"><ArrowRight size={32}/></button>
-                      </div>
-                  </section>
+          {/* Desktop Nav */}
+          <div className={`hidden md:flex items-center gap-8 ${scrolled || currentPage !== 'home' ? 'text-slate-700' : 'text-white'}`}>
+            <button onClick={() => navigate('home')} className={`hover:text-blue-500 transition-colors font-bold ${currentPage === 'home' ? 'text-blue-600 underline decoration-2 underline-offset-8' : ''}`}>Anasayfa</button>
+            <button onClick={() => navigate('kurumsal')} className={`hover:text-blue-500 transition-colors font-bold ${currentPage === 'kurumsal' ? 'text-blue-600 underline decoration-2 underline-offset-8' : ''}`}>Kurumsal</button>
+            <button onClick={() => navigate('hizmetler')} className={`hover:text-blue-500 transition-colors font-bold ${currentPage === 'hizmetler' ? 'text-blue-600 underline decoration-2 underline-offset-8' : ''}`}>Hizmetler</button>
+            <button onClick={() => navigate('urunler')} className={`hover:text-blue-500 transition-colors font-bold ${currentPage === 'urunler' ? 'text-blue-600 underline decoration-2 underline-offset-8' : ''}`}>Ürünler</button>
+            <button onClick={() => navigate('iletisim')} className={`hover:text-blue-500 transition-colors font-bold ${currentPage === 'iletisim' ? 'text-blue-600 underline decoration-2 underline-offset-8' : ''}`}>İletişim</button>
+            <a href="tel:+902120000000" className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full transition-all transform hover:scale-105">
+              <Phone size={18} />
+              <span>Hemen Ara</span>
+            </a>
+          </div>
+
+          {/* Mobile Toggle */}
+          <button className={`md:hidden p-2 rounded-lg ${scrolled || currentPage !== 'home' ? 'text-slate-900' : 'text-white'}`} onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+        </div>
+
+        {/* Mobile Menu Overlay */}
+        {isMenuOpen && (
+          <div className="md:hidden absolute top-full left-0 w-full bg-white text-slate-900 shadow-2xl border-t p-6 flex flex-col gap-6 animate-fade-in">
+            <button onClick={() => navigate('home')} className="text-xl font-bold border-b pb-2 text-left">Anasayfa</button>
+            <button onClick={() => navigate('kurumsal')} className="text-xl font-bold border-b pb-2 text-left">Kurumsal</button>
+            <button onClick={() => navigate('hizmetler')} className="text-xl font-bold border-b pb-2 text-left">Hizmetler</button>
+            <button onClick={() => navigate('urunler')} className="text-xl font-bold border-b pb-2 text-left">Ürünler</button>
+            <button onClick={() => navigate('iletisim')} className="text-xl font-bold border-b pb-2 text-left">İletişim</button>
+            <a href="tel:+902120000000" className="flex items-center justify-center gap-3 bg-blue-600 text-white py-4 rounded-xl font-bold mt-4">
+              <Phone size={20} />
+              <span>Hemen Ara</span>
+            </a>
+          </div>
+        )}
+      </nav>
+
+      {/* Page Content */}
+      <main>
+        {currentPage === 'home' && <HomePage />}
+        {currentPage === 'kurumsal' && <CorporatePage />}
+        {currentPage === 'hizmetler' && <ServicesPage />}
+        {currentPage === 'urunler' && <ProductsPage />}
+        {currentPage === 'iletisim' && <ContactPage />}
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-slate-950 text-white pt-20 pb-10">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+            <div className="col-span-1 lg:col-span-2">
+              <div className="flex items-center gap-2 mb-8">
+                <Settings className="text-blue-500 w-8 h-8" />
+                <span className="text-2xl font-bold tracking-tighter uppercase">
+                  ATILIM <span className="font-light">DİZEL</span>
+                </span>
               </div>
-
-              {/* Full-width Newsletter Section */}
-              <section className="w-full bg-[#1A1A1A] py-40 text-center relative overflow-hidden mt-32">
-                 <div className="absolute top-0 left-0 w-full h-full bg-[#FF719A]/5 opacity-30"></div>
-                 <div className="relative z-10 max-w-[800px] mx-auto space-y-12 px-8">
-                    <div className="w-20 h-20 bg-[#FF719A]/10 rounded-[30px] border border-white/10 flex items-center justify-center mx-auto text-[#FF719A] shadow-inner mb-6 transition-transform hover:scale-110 duration-500"><Mail size={32} /></div>
-                    <h3 className="text-7xl md:text-8xl font-black uppercase tracking-tighter italic text-white leading-none">The Studio <br/> Journal</h3>
-                    <p className="text-2xl text-white/60 font-medium italic">Join 50,000+ creators. Get free digital patterns, studio drops, and 10% off your first order.</p>
-                    <div className="flex flex-col md:flex-row gap-5 pt-10">
-                       <input type="text" placeholder="Creative Email" className="flex-1 bg-white/5 border-2 border-white/10 rounded-[35px] px-10 py-7 text-lg font-bold text-white focus:border-[#FF719A] transition-all outline-none" />
-                       <button className="bg-[#FF719A] text-white px-16 py-7 rounded-[35px] font-black uppercase text-xs tracking-[0.4em] shadow-2xl active:scale-95 transition-all">SIGN ME UP</button>
-                    </div>
-                 </div>
-              </section>
-            </main>
-          );
-
-          const CategoriesView = () => (
-            <div className="pt-[220px] pb-32 max-w-[1000px] mx-auto px-8 bg-[#FBFBF9] min-h-screen text-left">
-              <div className="mb-24 text-left border-l-8 border-[#FF719A] pl-10 animate-in fade-in slide-in-from-left-8 duration-1000">
-                <h2 className="text-8xl font-black uppercase tracking-tighter italic leading-none text-[#1A1A1A]">Design <br/> Hubs</h2>
-                <p className="text-slate-400 mt-10 max-w-2xl text-2xl font-medium leading-relaxed italic opacity-80">Choose the atmosphere that speaks to your workspace ritual.</p>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                {collections.map(col => (
-                  <div key={col.id} className="group relative aspect-[4/5] rounded-[75px] overflow-hidden cursor-pointer shadow-2xl border-8 border-white transition-all duration-500 hover:-translate-y-4" onClick={() => {setActiveCollection(col); setCurrentPage('designs');}}>
-                    <img src={col.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1500ms]" alt={col.label} />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-                    <div className="absolute bottom-16 left-12 text-white text-left">
-                       <span className="text-[11px] font-black text-[#FF719A] uppercase tracking-[0.5em]">{col.count} DESIGNS</span>
-                       <h3 className="text-5xl font-black uppercase tracking-tighter mt-4 italic leading-none text-left">{col.label}</h3>
-                       <div className="mt-10 flex items-center gap-5 text-[11px] font-black uppercase tracking-widest translate-y-6 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 italic leading-none">ENTER HUB <ArrowRight size={16}/></div>
-                    </div>
-                  </div>
+              <p className="text-slate-400 text-lg max-w-md mb-8 leading-relaxed">
+                İkitelli OSB'de modern tesislerimizde, dünya markası test cihazları ile dizel yakıt sistemleri revizyonunda güvenilir çözüm ortağınızız.
+              </p>
+              <div className="flex gap-4">
+                {['facebook', 'instagram', 'linkedin', 'youtube'].map(social => (
+                  <a key={social} href="#" className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-blue-600 hover:border-blue-500 transition-all cursor-pointer text-white font-bold text-sm uppercase">
+                    {social[0]}
+                  </a>
                 ))}
               </div>
             </div>
-          );
-
-          const DesignsView = () => (
-            <div className="pt-[220px] pb-32 max-w-[1000px] mx-auto px-8 bg-[#FBFBF9] min-h-screen text-left text-[#1A1A1A]">
-              <div className="flex flex-col md:flex-row md:items-end justify-between gap-16 mb-24 animate-in fade-in duration-1000">
-                <div className="flex items-center gap-10">
-                  <button onClick={() => setCurrentPage('categories')} className="w-20 h-20 flex items-center justify-center bg-white border-4 border-white rounded-full hover:bg-slate-50 shadow-2xl transition-all active:scale-90"><ChevronLeft size={32} className="text-[#1A1A1A]" /></button>
-                  <div className="space-y-4">
-                     <span className="text-[14px] font-black uppercase tracking-[0.6em] text-[#FF719A] leading-none text-left">STUDIO SERIES</span>
-                     <h2 className="text-8xl font-black uppercase tracking-tighter leading-none italic">{activeCollection?.label || 'Designs'}</h2>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-12 gap-y-24">
-                {[1, 2, 3, 4, 5, 6].map(i => (
-                  <div key={i} onClick={() => setCurrentPage('pdp')} className="group cursor-pointer space-y-10 animate-in fade-in slide-in-from-bottom-12 duration-700">
-                    <div className="aspect-square rounded-[80px] overflow-hidden bg-white relative border-8 border-white shadow-2xl p-2.5 transition-all hover:shadow-indigo-500/10">
-                      <div className="w-full h-full rounded-[65px] overflow-hidden">
-                         <img src={`https://images.unsplash.com/photo-1544923246-77307dd654cb?q=80&w=500&sig=${i+10}`} className="w-full h-full object-cover group-hover:scale-115 transition-transform duration-[1500ms]" alt="Product" />
-                      </div>
-                      <div className="absolute bottom-12 left-12 right-12 h-16 bg-[#1A1A1A]/95 backdrop-blur-xl text-white rounded-[30px] flex items-center justify-center text-[12px] font-black uppercase tracking-[0.3em] opacity-0 group-hover:opacity-100 translate-y-10 group-hover:translate-y-0 transition-all duration-700">
-                         VIEW PRODUCT <ArrowRight size={16} className="ml-3" />
-                      </div>
-                    </div>
-                    <div className="px-10 text-left">
-                      <h4 className="font-black uppercase text-2xl italic leading-tight text-[#1A1A1A]">Studio <br/> Selection</h4>
-                      <p className="text-xl font-black text-slate-300 italic font-serif mt-4">$35.00 — $45.00</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            
+            <div>
+              <h5 className="text-xl font-bold mb-8 text-white">Hızlı Linkler</h5>
+              <ul className="space-y-4 text-slate-400">
+                <li><button onClick={() => navigate('kurumsal')} className="hover:text-blue-400 transition-colors flex items-center gap-2 text-left"><ChevronRight size={14}/> Kurumsal</button></li>
+                <li><button onClick={() => navigate('hizmetler')} className="hover:text-blue-400 transition-colors flex items-center gap-2 text-left"><ChevronRight size={14}/> Hizmetlerimiz</button></li>
+                <li><button onClick={() => navigate('urunler')} className="hover:text-blue-400 transition-colors flex items-center gap-2 text-left"><ChevronRight size={14}/> Ürün Kataloğu</button></li>
+                <li><button onClick={() => navigate('iletisim')} className="hover:text-blue-400 transition-colors flex items-center gap-2 text-left"><ChevronRight size={14}/> İletişim</button></li>
+              </ul>
             </div>
-          );
 
-          const PDPView = () => (
-            <div className="pt-[220px] pb-40 max-w-[1000px] mx-auto px-8 bg-[#FBFBF9] min-h-screen text-left text-[#1A1A1A]">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-24">
-                <div className="space-y-12 text-left">
-                   <div className="aspect-square bg-white rounded-[80px] overflow-hidden border-[12px] border-white shadow-2xl p-6 group">
-                      <img src="https://images.unsplash.com/photo-1517142089942-ba376ce32a2e?q=80&w=1200" className="w-full h-full object-cover rounded-[65px] group-hover:scale-105 transition-transform duration-[3000ms]" alt="Main Product" />
-                   </div>
-                   <div className="pt-24 border-t border-slate-200/50">
-                      <h3 className="text-4xl font-black uppercase tracking-tighter flex items-center gap-8 italic leading-none text-[#1A1A1A] mb-16 text-left">
-                        <Camera size={40} className="text-[#FF719A]" /> Shared By Studio
-                      </h3>
-                      <div className="grid grid-cols-2 gap-8 text-left">
-                         {[1, 2, 3, 4].map(i => (
-                           <div key={i} className="aspect-square rounded-[50px] overflow-hidden border-8 border-white shadow-xl">
-                              <img src={`https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=400&sig=${i+80}`} className="w-full h-full object-cover transition-transform hover:scale-110 duration-700" alt="UGC Context" />
-                           </div>
-                         ))}
-                      </div>
-                   </div>
+            <div>
+              <h5 className="text-xl font-bold mb-8 text-white">Servis Bilgileri</h5>
+              <div className="space-y-4 bg-white/5 p-6 rounded-2xl border border-white/10 text-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">Hafta İçi:</span>
+                  <span className="font-bold text-white">08:30 - 18:30</span>
                 </div>
-
-                <div className="space-y-16 pt-10 text-left">
-                  <div className="space-y-8 text-left">
-                    <span className="px-6 py-2 bg-[#FF719A] text-white text-[10px] font-black uppercase tracking-[0.4em] rounded-full shadow-lg shadow-[#FF719A]/20 italic">ARTISAN CHOICE</span>
-                    <h1 className="text-7xl font-black uppercase tracking-tighter leading-[0.8] italic text-[#1A1A1A]">Misket Cat <br /> Mug Rug</h1>
-                    <p className="text-2xl text-slate-500 leading-relaxed italic font-serif opacity-80 max-w-lg leading-relaxed text-left text-left">Add a character to your workspace ritual. Handcrafted in our studio with premium woolen textures.</p>
-                  </div>
-
-                  <div className="space-y-10 bg-white p-12 rounded-[70px] shadow-2xl border border-slate-50 relative overflow-hidden">
-                      <div className="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-[#FF719A] to-[#1A1A1A]"></div>
-                      <div className="bg-slate-100 p-3 rounded-[45px] flex gap-4">
-                        <button 
-                          onClick={() => setMakerMode('diy')}
-                          className={`flex-1 py-10 px-4 rounded-[38px] text-xs font-bold transition-all relative z-10 transform active:scale-95 ${makerMode === 'diy' ? 'bg-white shadow-2xl text-[#1A1A1A]' : 'text-slate-400'}`}
-                        >
-                          <div className="flex flex-col items-center gap-4">
-                            <Scissors size={28} className={makerMode === 'diy' ? 'text-[#FF719A]' : ''} />
-                            <span className="uppercase tracking-[0.3em] text-[10px] font-black">DIY KIT</span>
-                            <span className="text-2xl font-black tracking-tighter italic leading-none">$25</span>
-                          </div>
-                        </button>
-                        <button 
-                          onClick={() => setMakerMode('ready')}
-                          className={`flex-1 py-10 px-4 rounded-[38px] text-xs font-bold transition-all relative z-10 transform active:scale-95 ${makerMode === 'ready' ? 'bg-white shadow-2xl text-[#1A1A1A]' : 'text-slate-400'}`}
-                        >
-                          <div className="flex flex-col items-center gap-4">
-                            <Box size={28} className={makerMode === 'ready' ? 'text-[#FF719A]' : ''} />
-                            <span className="uppercase tracking-[0.3em] text-[10px] font-black">STUDIO MADE</span>
-                            <span className="text-2xl font-black tracking-tighter italic leading-none">$45</span>
-                          </div>
-                        </button>
-                      </div>
-                      <p className="text-base font-medium text-slate-500 italic opacity-80 px-4 leading-relaxed text-left">
-                        {makerMode === 'diy' 
-                        ? "Experience the magic at home: Curated yarns, needle, hoop, and digital video tutorial." 
-                        : "Hand-stitched by master artisans. Over 5 hours of meticulous craftsmanship in every piece."}
-                      </p>
-                  </div>
-
-                  <div className="space-y-12 text-left">
-                      <div className="flex gap-10 border-b border-slate-100 pb-5 overflow-x-auto no-scrollbar">
-                        {['cats', 'dogs', 'others'].map(tab => (
-                          <button key={tab} onClick={() => setActiveVariantTab(tab)} className={`px-6 py-4 text-[13px] font-black uppercase tracking-[0.4em] transition-all relative whitespace-nowrap ${activeVariantTab === tab ? 'text-[#1A1A1A] scale-110 font-black italic' : 'text-slate-300'}`}>
-                            {tab}
-                            {activeVariantTab === tab && <div className="absolute -bottom-[21px] left-0 right-0 h-3 bg-[#FF719A] rounded-t-full shadow-lg shadow-[#FF719A]/50 animate-in slide-in-from-bottom-2"></div>}
-                          </button>
-                        ))}
-                      </div>
-
-                      <div className="grid grid-cols-5 gap-6">
-                        {variants[activeVariantTab].map(v => (
-                          <button key={v.id} onClick={() => setSelectedVariant(v.id)} className={`aspect-square rounded-[25px] border-4 transition-all ${selectedVariant === v.id ? 'border-[#FF719A] scale-125 shadow-2xl bg-white z-10 rotate-3' : 'border-transparent bg-white hover:border-slate-100 shadow-md'}`}>
-                            <div className="w-full h-full rounded-[18px]" style={{ backgroundColor: v.color }}></div>
-                          </button>
-                        ))}
-                      </div>
-                  </div>
-
-                  <button onClick={() => setIsCartOpen(true)} className="w-full bg-[#1A1A1A] text-white py-12 rounded-[50px] font-black text-base uppercase tracking-[0.5em] hover:bg-[#FF719A] shadow-2xl transform active:scale-95 flex items-center justify-center gap-10 transition-all shadow-black/10 border-b-8 border-black">
-                    ADD TO BAG <ArrowRight size={28} />
-                  </button>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">Cumartesi:</span>
+                  <span className="font-bold text-white">08:30 - 15:00</span>
+                </div>
+                <div className="flex justify-between items-center text-red-400">
+                  <span className="text-slate-400">Pazar:</span>
+                  <span className="font-bold uppercase">Kapalı</span>
                 </div>
               </div>
             </div>
-          );
-
-          const B2BView = () => (
-            <div className="pt-[220px] pb-32 max-w-[1000px] mx-auto px-8 bg-[#FBFBF9] min-h-screen text-left text-[#1A1A1A]">
-              <div className="text-center space-y-12 mb-24 animate-in fade-in duration-1000">
-                 <span className="text-[11px] font-black uppercase tracking-[0.6em] text-[#FF719A]">EWA FOR BUSINESS</span>
-                 <h2 className="text-8xl font-black uppercase tracking-tighter leading-[0.8] italic text-left">Corporate <br/> Partnerships</h2>
-                 <p className="text-2xl text-slate-500 max-w-2xl mx-auto font-medium leading-relaxed italic opacity-80 leading-relaxed text-left">Personalized mug rug designs for your studio or corporate events. Let's create something tactile together.</p>
-              </div>
-              
-              <div className="bg-white p-20 rounded-[80px] shadow-2xl border border-slate-50 grid grid-cols-1 md:grid-cols-2 gap-24">
-                <div className="space-y-12 text-left">
-                   <h3 className="text-4xl font-black uppercase tracking-tight italic">Inquiry Form</h3>
-                   <div className="space-y-8 text-[#1A1A1A]">
-                      <input type="text" placeholder="Company Name" className="w-full bg-slate-50 border-none rounded-[30px] px-10 py-7 text-sm font-bold focus:ring-4 focus:ring-[#FF719A]/30 transition-all outline-none shadow-inner" />
-                      <input type="email" placeholder="Work Email" className="w-full bg-slate-50 border-none rounded-[30px] px-10 py-7 text-sm font-bold focus:ring-4 focus:ring-[#FF719A]/30 transition-all outline-none shadow-inner" />
-                      <textarea placeholder="Tell us about your project" rows="5" className="w-full bg-slate-50 border-none rounded-[30px] px-10 py-8 text-sm font-bold focus:ring-4 focus:ring-[#FF719A]/30 transition-all outline-none shadow-inner"></textarea>
-                      <button className="w-full bg-[#1A1A1A] text-white py-8 rounded-[35px] font-black uppercase text-xs tracking-[0.4em] shadow-2xl hover:bg-[#FF719A] transition-all transform active:scale-95">SEND REQUEST</button>
-                   </div>
-                </div>
-                <div className="space-y-16 text-left border-l border-slate-50 pl-16">
-                   <h3 className="text-4xl font-black uppercase tracking-tight italic opacity-30 text-left">The Perks</h3>
-                   <ul className="space-y-12">
-                      {[
-                        { t: "Logo Weaving", d: "Incorporate your brand identity into textile rituals." },
-                        { t: "Priority Service", d: "Dedicated production timelines for bulk orders." },
-                        { t: "Studio Boxes", d: "Premium branded packaging and studio hand-notes." }
-                      ].map((item, i) => (
-                        <li key={i} className="flex gap-8 group">
-                           <div className="w-14 h-14 bg-[#FF719A] rounded-[22px] flex items-center justify-center shrink-0 font-black italic text-xl shadow-xl group-hover:rotate-12 transition-transform duration-500 text-white border-4 border-white">!</div>
-                           <div className="space-y-2 text-left flex-1 text-[#1A1A1A]">
-                              <h5 className="font-black uppercase text-sm tracking-[0.3em]">{item.t}</h5>
-                              <p className="text-sm text-slate-400 leading-relaxed font-medium italic opacity-70 leading-relaxed">{item.d}</p>
-                           </div>
-                        </li>
-                      ))}
-                   </ul>
-                </div>
-              </div>
+          </div>
+          
+          <div className="pt-8 border-t border-white/10 text-center flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 text-sm">
+            <p>© 2024 Atılım Dizel Pompa Enjektör Servisi. Tüm Hakları Saklıdır.</p>
+            <div className="flex gap-6">
+              <a href="#" className="hover:text-white transition-colors">KVKK</a>
+              <a href="#" className="hover:text-white transition-colors">Yasal Uyarı</a>
             </div>
-          );
+          </div>
+        </div>
+      </footer>
 
-          // --- ANA YAPI ---
+      {/* Global Styles */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes fade-in {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .animate-spin-slow { animation: spin 12s linear infinite; }
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        html { scroll-behavior: smooth; }
+      `}} />
+    </div>
+  );
+};
 
-          return (
-            <div className="min-h-screen bg-[#FBFBF9] selection:bg-[#FF719A] selection:text-white font-sans antialiased text-left overflow-x-hidden">
-              <Header />
-              <MobileCurtainMenu />
-              <CartDrawer />
-              
-              {/* Sayfa Değiştirici */}
-              {currentPage === 'home' && <HomeView />}
-              {currentPage === 'categories' && <CategoriesView />}
-              {currentPage === 'designs' && <DesignsView />}
-              {currentPage === 'pdp' && <PDPView />}
-              {currentPage === 'b2b' && <B2BView />}
-
-              <style dangerouslySetInnerHTML={{ __html: `
-                @keyframes slow-zoom { 0% { transform: scale(1.05); } 100% { transform: scale(1.15); } }
-                .animate-slow-zoom { animation: slow-zoom 50s ease-in-out infinite alternate; }
-                .no-scrollbar::-webkit-scrollbar { display: none; }
-                ::-webkit-scrollbar { width: 10px; }
-                ::-webkit-scrollbar-track { background: #FBFBF9; }
-                ::-webkit-scrollbar-thumb { background: #1A1A1A25; border-radius: 20px; border: 3px solid #FBFBF9; }
-                ::-webkit-scrollbar-thumb:hover { background: #1A1A1A40; }
-                body { background-color: #FBFBF9; scroll-behavior: smooth; overflow-x: hidden; }
-                * { -webkit-tap-highlight-color: transparent; outline: none; }
-              `}} />
-            </div>
-          );
-        };
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
-</body>
-</html>
+export default App;
